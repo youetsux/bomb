@@ -3,6 +3,56 @@
 #include "./Stage.h"
 #include "globals.h"
 
+namespace {
+	enum DIR
+	{
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+		NONE,
+		MAXDIR
+	};
+	DIR inputDir = NONE;
+	DIR CheckHitRegion(const Rect& me, const Rect& other)
+	{
+		if (me.x > other.x)
+		{
+			if (abs(me.x - other.x) < CHA_WIDTH / 4)
+			{
+				//左にニョロ
+				return 0;
+			}
+		}
+		else
+		{
+			if (abs(me.x - other.x) < CHA_WIDTH / 4)
+			{
+				return 1;
+				//右にニョロ
+			}
+		}
+		if (me.y > other.y)
+		{
+			if (abs(me.y - other.y) < CHA_HEIGHT / 4)
+			{
+				return 2;
+				//上にニョロ
+			}
+		}
+		else
+		{
+			if (abs(me.y - other.y) < CHA_HEIGHT / 4)
+			{
+				//下にニョロ
+				return 3;
+			}
+		}
+		return -1;
+	}
+}
+
+
 Player::Player()
 	: x(CHA_WIDTH), y(CHA_HEIGHT)
 {
@@ -19,35 +69,51 @@ void Player::Update()
 	if (Input::IsKeepKeyDown(KEY_INPUT_UP))
 	{
 		y--;
+		inputDir = UP;
 	}
 	if (Input::IsKeepKeyDown(KEY_INPUT_DOWN))
 	{
 		y++;
+		inputDir = DOWN;
 	}
 	if (Input::IsKeepKeyDown(KEY_INPUT_LEFT))
 	{
 		x--;
+		inputDir = LEFT;
 	}
 	if (Input::IsKeepKeyDown(KEY_INPUT_RIGHT))
 	{
 		x++;
+		inputDir = RIGHT;
 	}
 
 	Stage* stage = (Stage*)FindGameObject<Stage>();
-	if (stage->GetStageData(x / CHA_WIDTH, y / CHA_HEIGHT) == STAGE_OBJ::WALL)
+	Rect playerRect = { x, y, CHA_WIDTH, CHA_HEIGHT };
+
+	for(auto& obj : stage->GetStageRects())
 	{
-		if (stage->GetStageData(ox / CHA_WIDTH, y / CHA_HEIGHT) == STAGE_OBJ::WALL)
+		Rect objRect = { obj.x, obj.y, CHA_WIDTH, CHA_HEIGHT };
+
+		if (CheckHit(playerRect, objRect))
 		{
-			x = ox;
-		}
-		else if (stage->GetStageData(x / CHA_WIDTH, oy / CHA_HEIGHT) == STAGE_OBJ::WALL)
-		{
-			y = oy;
-		}
-		else
-		{
-			x = ox;
-			y = oy;
+			Rect tmpRectX = { ox, y, CHA_WIDTH, CHA_HEIGHT };
+			Rect tmpRecty = { x, oy, CHA_WIDTH, CHA_HEIGHT };
+			if (CheckHitRegion(playerRect, objRect) < 0)
+			{
+				if (!CheckHit(tmpRectX, objRect))
+				{
+					x = ox;
+				}
+				else if (!CheckHit(tmpRecty, objRect))
+				{
+					y = oy;
+				}
+				else
+				{
+					x = ox;
+					y = oy;
+				}
+			}
 		}
 	}
 }

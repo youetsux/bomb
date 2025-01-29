@@ -1,4 +1,4 @@
-#include "Source/screen.h"
+#pragma once
 
 
 	struct Rect
@@ -18,5 +18,3 @@
 	const int CHA_WIDTH = 32;
 	const int CHA_HEIGHT = 32;
 
-	constexpr int STAGE_WIDTH = (Screen::WIDTH / CHA_WIDTH) % 2 ? (Screen::WIDTH / CHA_WIDTH) : (Screen::WIDTH / CHA_WIDTH) - 1;
-	constexpr int STAGE_HEIGHT = (Screen::HEIGHT / CHA_HEIGHT) % 2 ? (Screen::HEIGHT / CHA_HEIGHT) : (Screen::HEIGHT / CHA_HEIGHT) - 1;

@@ -1,5 +1,6 @@
 #pragma once
 #include "./Library/GameObject.h"
+#include "./globals.h"
 
 class Player :
     public GameObject
