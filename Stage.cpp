@@ -66,7 +66,7 @@ void Stage::setStageRects()
 		{
 			if (stageData[y][x] == STAGE_OBJ::WALL)
 			{
-				stageRects.push_back(Rect(x * CHA_WIDTH, y * CHA_HEIGHT, x * CHA_WIDTH + CHA_WIDTH, y * CHA_HEIGHT + CHA_HEIGHT));
+				stageRects.push_back(Rect(x * CHA_WIDTH, y * CHA_HEIGHT,  CHA_WIDTH, CHA_HEIGHT));
 			}
 		}
 	}

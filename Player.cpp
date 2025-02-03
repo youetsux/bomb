@@ -14,7 +14,7 @@ namespace {
 		MAXDIR
 	};
 	DIR inputDir = NONE;
-	DIR CheckHitRegion(const Rect& me, const Rect& other)
+	int CheckHitRegion(const Rect& me, const Rect& other)
 	{
 		if (me.x > other.x)
 		{
@@ -92,28 +92,36 @@ void Player::Update()
 
 	for(auto& obj : stage->GetStageRects())
 	{
-		Rect objRect = { obj.x, obj.y, CHA_WIDTH, CHA_HEIGHT };
+		//Rect objRect = { obj.x, obj.y, CHA_WIDTH, CHA_HEIGHT };
 
-		if (CheckHit(playerRect, objRect))
+		if (CheckHit(playerRect, obj))
 		{
 			Rect tmpRectX = { ox, y, CHA_WIDTH, CHA_HEIGHT };
 			Rect tmpRecty = { x, oy, CHA_WIDTH, CHA_HEIGHT };
-			if (CheckHitRegion(playerRect, objRect) < 0)
-			{
-				if (!CheckHit(tmpRectX, objRect))
+			//if (CheckHitRegion(playerRect, obj) < 0)
+			//{
+				if (!CheckHit(tmpRectX, obj))
 				{
 					x = ox;
 				}
-				else if (!CheckHit(tmpRecty, objRect))
+				else if (!CheckHit(tmpRecty, obj))
 				{
 					y = oy;
 				}
 				else
 				{
 					x = ox;
-					y = oy;
+					y = oy;			
 				}
-			}
+				if (inputDir == LEFT || inputDir == RIGHT)
+				{
+
+				}
+				else if (inputDir == UP || inputDir == DOWN)
+				{
+
+				}
+//			}
 		}
 	}
 }
