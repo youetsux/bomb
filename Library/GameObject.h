@@ -1,5 +1,5 @@
 #pragma once
-#pragma once
+
 /// <summary>
 /// ゲームオブジェクトの基底クラス
 /// </summary>

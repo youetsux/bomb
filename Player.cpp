@@ -18,7 +18,7 @@ namespace {
 
 
 Player::Player()
-	: x(CHA_WIDTH), y(CHA_HEIGHT),playerImage(-1)
+	: pos_({ CHA_WIDTH, CHA_HEIGHT }), playerImage_(-1)
 {
 }
 
@@ -28,71 +28,71 @@ Player::~Player()
 
 void Player::Update()
 {
-	int ox = x, oy = y;
+	int ox = pos_.x, oy = pos_.y;
 
 	if (Input::IsKeepKeyDown(KEY_INPUT_UP))
 	{
-		y--;
+		pos_.y--;
 		inputDir = UP;
 	}
 	else if (Input::IsKeepKeyDown(KEY_INPUT_DOWN))
 	{
-		y++;
+		pos_.y++;
 		inputDir = DOWN;
 	}
 	else if (Input::IsKeepKeyDown(KEY_INPUT_LEFT))
 	{
-		x--;
+		pos_.x--;
 		inputDir = LEFT;
 	}
 	else if (Input::IsKeepKeyDown(KEY_INPUT_RIGHT))
 	{
-		x++;
+		pos_.x++;
 		inputDir = RIGHT;
 	}
 
 	Stage* stage = (Stage*)FindGameObject<Stage>();
-	Rect playerRect = { x, y, CHA_WIDTH, CHA_HEIGHT };
+	Rect playerRect = { pos_.x, pos_.y, CHA_WIDTH, CHA_HEIGHT };
 
 	for (auto& obj : stage->GetStageRects())
 	{
 		if (CheckHit(playerRect, obj))
 		{
-			Rect tmpRectX = { ox, y, CHA_WIDTH, CHA_HEIGHT };
-			Rect tmpRecty = { x, oy, CHA_WIDTH, CHA_HEIGHT };
+			Rect tmpRectX = { ox, pos_.y, CHA_WIDTH, CHA_HEIGHT };
+			Rect tmpRecty = { pos_.x, oy, CHA_WIDTH, CHA_HEIGHT };
 
 			if (!CheckHit(tmpRectX, obj))
 			{
-				x = ox;
-				Point centerMe = Rect{ x, y, CHA_WIDTH, CHA_HEIGHT }.GetCenter();
+				pos_.x = ox;
+				Point centerMe = Rect{ pos_.x, pos_.y, CHA_WIDTH, CHA_HEIGHT }.GetCenter();
 				Point centerObj = obj.GetCenter();
 				if (centerMe.y > centerObj.y)
 				{
-					y++;
+					pos_.y++;
 				}
 				if (centerMe.y < centerObj.y)
 				{
-					y--;
+					pos_.y--;
 				}
 			}
 			else if (!CheckHit(tmpRecty, obj))
 			{
-				y = oy;
-				Point centerMe = Rect{ x, y, CHA_WIDTH, CHA_HEIGHT }.GetCenter();
+				pos_.y = oy;
+				Point centerMe = Rect{ pos_.x, pos_.y, CHA_WIDTH, CHA_HEIGHT }.GetCenter();
 				Point centerObj = obj.GetCenter();
 				if (centerMe.x > centerObj.x)
 				{
-					x++;
+					pos_.x++;
 				}
 				if (centerMe.x < centerObj.x)
 				{
-					x--;
+					pos_.x--;
 				}
 			}
 			else
 			{
-				x = ox;
-				y = oy;
+				pos_.x = ox;
+				pos_.y = oy;
 			}
 		}
 	}
@@ -100,7 +100,7 @@ void Player::Update()
 
 void Player::Draw()
 {
-	DrawBox(x, y, x + CHA_WIDTH, y + CHA_HEIGHT, GetColor(255, 10, 10), TRUE);
+	DrawBox(pos_.x, pos_.y, pos_.x + CHA_WIDTH, pos_.y + CHA_HEIGHT, GetColor(255, 10, 10), TRUE);
 }
 
 bool Player::CheckHit(const Rect& me, const Rect& other)

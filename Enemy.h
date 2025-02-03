@@ -2,16 +2,18 @@
 #include "./Library/GameObject.h"
 #include "./globals.h"
 
-class Player :
+
+class Enemy :
     public GameObject
 {
-    int playerImage_;
     Point pos_;
+    bool isAlive_;
 public:
-	Player();
-    ~Player();
+    Enemy();
+    ~Enemy();
+
     void Update() override;
     void Draw() override;
-	bool CheckHit(const Rect& me,const Rect& other);
+    bool CheckHit(const Rect& me, const Rect& other);
 };
 
