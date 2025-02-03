@@ -14,47 +14,11 @@ namespace {
 		MAXDIR
 	};
 	DIR inputDir = NONE;
-	int CheckHitRegion(const Rect& me, const Rect& other)
-	{
-		if (me.x > other.x)
-		{
-			if (abs(me.x - other.x) < CHA_WIDTH / 4)
-			{
-				//左にニョロ
-				return 0;
-			}
-		}
-		else
-		{
-			if (abs(me.x - other.x) < CHA_WIDTH / 4)
-			{
-				return 1;
-				//右にニョロ
-			}
-		}
-		if (me.y > other.y)
-		{
-			if (abs(me.y - other.y) < CHA_HEIGHT / 4)
-			{
-				return 2;
-				//上にニョロ
-			}
-		}
-		else
-		{
-			if (abs(me.y - other.y) < CHA_HEIGHT / 4)
-			{
-				//下にニョロ
-				return 3;
-			}
-		}
-		return -1;
-	}
 }
 
 
 Player::Player()
-	: x(CHA_WIDTH), y(CHA_HEIGHT)
+	: x(CHA_WIDTH), y(CHA_HEIGHT),playerImage(-1)
 {
 }
 
@@ -65,23 +29,23 @@ Player::~Player()
 void Player::Update()
 {
 	int ox = x, oy = y;
-	
+
 	if (Input::IsKeepKeyDown(KEY_INPUT_UP))
 	{
 		y--;
 		inputDir = UP;
 	}
-	if (Input::IsKeepKeyDown(KEY_INPUT_DOWN))
+	else if (Input::IsKeepKeyDown(KEY_INPUT_DOWN))
 	{
 		y++;
 		inputDir = DOWN;
 	}
-	if (Input::IsKeepKeyDown(KEY_INPUT_LEFT))
+	else if (Input::IsKeepKeyDown(KEY_INPUT_LEFT))
 	{
 		x--;
 		inputDir = LEFT;
 	}
-	if (Input::IsKeepKeyDown(KEY_INPUT_RIGHT))
+	else if (Input::IsKeepKeyDown(KEY_INPUT_RIGHT))
 	{
 		x++;
 		inputDir = RIGHT;
@@ -90,45 +54,53 @@ void Player::Update()
 	Stage* stage = (Stage*)FindGameObject<Stage>();
 	Rect playerRect = { x, y, CHA_WIDTH, CHA_HEIGHT };
 
-	for(auto& obj : stage->GetStageRects())
+	for (auto& obj : stage->GetStageRects())
 	{
-		//Rect objRect = { obj.x, obj.y, CHA_WIDTH, CHA_HEIGHT };
-
 		if (CheckHit(playerRect, obj))
 		{
 			Rect tmpRectX = { ox, y, CHA_WIDTH, CHA_HEIGHT };
 			Rect tmpRecty = { x, oy, CHA_WIDTH, CHA_HEIGHT };
-			//if (CheckHitRegion(playerRect, obj) < 0)
-			//{
-				if (!CheckHit(tmpRectX, obj))
-				{
-					x = ox;
-				}
-				else if (!CheckHit(tmpRecty, obj))
-				{
-					y = oy;
-				}
-				else
-				{
-					x = ox;
-					y = oy;			
-				}
-				if (inputDir == LEFT || inputDir == RIGHT)
-				{
 
-				}
-				else if (inputDir == UP || inputDir == DOWN)
+			if (!CheckHit(tmpRectX, obj))
+			{
+				x = ox;
+				Point centerMe = Rect{ x, y, CHA_WIDTH, CHA_HEIGHT }.GetCenter();
+				Point centerObj = obj.GetCenter();
+				if (centerMe.y > centerObj.y)
 				{
-
+					y++;
 				}
-//			}
+				if (centerMe.y < centerObj.y)
+				{
+					y--;
+				}
+			}
+			else if (!CheckHit(tmpRecty, obj))
+			{
+				y = oy;
+				Point centerMe = Rect{ x, y, CHA_WIDTH, CHA_HEIGHT }.GetCenter();
+				Point centerObj = obj.GetCenter();
+				if (centerMe.x > centerObj.x)
+				{
+					x++;
+				}
+				if (centerMe.x < centerObj.x)
+				{
+					x--;
+				}
+			}
+			else
+			{
+				x = ox;
+				y = oy;
+			}
 		}
 	}
 }
 
 void Player::Draw()
 {
-	DrawBox(x, y, x + CHA_WIDTH, y + CHA_HEIGHT, GetColor(255,10,10), TRUE);
+	DrawBox(x, y, x + CHA_WIDTH, y + CHA_HEIGHT, GetColor(255, 10, 10), TRUE);
 }
 
 bool Player::CheckHit(const Rect& me, const Rect& other)
