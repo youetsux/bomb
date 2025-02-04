@@ -5,10 +5,9 @@
 Enemy::Enemy()
     :pos_({ 0,0 }), isAlive_(true)
 {
-    int rx = GetRand(STAGE_WIDTH);
-    int ry = GetRand(STAGE_HEIGHT);
+    int rx = GetRand(STAGE_WIDTH * CHA_WIDTH);
+    int ry = GetRand(STAGE_HEIGHT * CHA_HEIGHT);
     pos_ = { rx, ry };
-
 }
 
 Enemy::~Enemy()

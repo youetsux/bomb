@@ -4,15 +4,15 @@
 #include "globals.h"
 
 namespace {
-	enum DIR
-	{
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT,
-		NONE,
-		MAXDIR
-	};
+	//enum DIR
+	//{
+	//	UP,
+	//	DOWN,
+	//	LEFT,
+	//	RIGHT,
+	//	NONE,
+	//	MAXDIR
+	//};
 	DIR inputDir = NONE;
 }
 
@@ -60,10 +60,11 @@ void Player::Update()
 		{
 			Rect tmpRectX = { ox, pos_.y, CHA_WIDTH, CHA_HEIGHT };
 			Rect tmpRecty = { pos_.x, oy, CHA_WIDTH, CHA_HEIGHT };
-
+			//x軸方向で引っ掛かった
 			if (!CheckHit(tmpRectX, obj))
 			{
-				pos_.x = ox;
+				pos_.x = ox;//x軸方向にめり込み修正
+				//壁ズリ
 				Point centerMe = Rect{ pos_.x, pos_.y, CHA_WIDTH, CHA_HEIGHT }.GetCenter();
 				Point centerObj = obj.GetCenter();
 				if (centerMe.y > centerObj.y)
@@ -77,7 +78,8 @@ void Player::Update()
 			}
 			else if (!CheckHit(tmpRecty, obj))
 			{
-				pos_.y = oy;
+				pos_.y = oy;//y方向に引っかかったらめり込み修正
+				//壁ズリ
 				Point centerMe = Rect{ pos_.x, pos_.y, CHA_WIDTH, CHA_HEIGHT }.GetCenter();
 				Point centerObj = obj.GetCenter();
 				if (centerMe.x > centerObj.x)
@@ -91,6 +93,7 @@ void Player::Update()
 			}
 			else
 			{
+				//それ以外で引っ掛かった時（いつやん）
 				pos_.x = ox;
 				pos_.y = oy;
 			}
