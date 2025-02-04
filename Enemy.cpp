@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "./Stage.h"
 #include "globals.h"
+#include "Player.h"
 
 namespace
 {
@@ -64,9 +65,38 @@ void Enemy::Update()
 	int cy = (pos_.y / (CHA_HEIGHT))%2;
 	if (prgssx == 0 && prgssy == 0 && cx && cy)
 	{
-		forward_ = (DIR)(GetRand(3));
+		//forward_ = (DIR)(GetRand(3));
+		//Ç±Ç±Ç…ìÆÇ´ÇÃÉpÉ^Å[ÉìÇì¸ÇÍÇÈ
+		//YCloserMove();
+		XCloserMove();
 	}
 
+}
+
+void Enemy::YCloserMove()
+{
+	Player* player = (Player*)FindGameObject<Player>();
+	if (pos_.y > player->GetPos().y)
+	{
+		forward_ = UP;
+	}
+	else if (pos_.y < player->GetPos().y)
+	{
+		forward_ = DOWN;
+	}
+}
+
+void Enemy::XCloserMove()
+{
+	Player* player = (Player*)FindGameObject<Player>();
+	if (pos_.x > player->GetPos().x)
+	{
+		forward_ = LEFT;
+	}
+	else if (pos_.x < player->GetPos().x)
+	{
+		forward_ = RIGHT;
+	}
 }
 
 void Enemy::Draw()
@@ -94,3 +124,5 @@ bool Enemy::CheckHit(const Rect& me, const Rect& other)
 	}
 	return false;
 }
+
+
