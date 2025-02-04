@@ -9,6 +9,8 @@ class Enemy :
     Point pos_;
     bool isAlive_;
     float speed_;
+    Point nextPos_;
+    DIR forward_;
 public:
     Enemy();
     ~Enemy();
