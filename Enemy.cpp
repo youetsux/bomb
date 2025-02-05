@@ -68,7 +68,7 @@ void Enemy::Update()
 		//forward_ = (DIR)(GetRand(3));
 		//Ç±Ç±Ç…ìÆÇ´ÇÃÉpÉ^Å[ÉìÇì¸ÇÍÇÈ
 		//YCloserMove();
-		XCloserMove();
+		XYCloserMove();
 	}
 
 }
@@ -96,6 +96,35 @@ void Enemy::XCloserMove()
 	else if (pos_.x < player->GetPos().x)
 	{
 		forward_ = RIGHT;
+	}
+}
+
+void Enemy::XYCloserMove()
+{
+	Player* player = (Player*)FindGameObject<Player>();
+	int xdis = abs(pos_.x - player->GetPos().x);
+	int ydis = abs(pos_.y - player->GetPos().y);
+
+	if (xdis > ydis) {
+		if (pos_.x > player->GetPos().x)
+		{
+			forward_ = LEFT;
+		}
+		else if (pos_.x < player->GetPos().x)
+		{
+			forward_ = RIGHT;
+		}
+	}
+	else 
+	{
+		if (pos_.y > player->GetPos().y)
+		{
+			forward_ = UP;
+		}
+		else if (pos_.y < player->GetPos().y)
+		{
+			forward_ = DOWN;
+		}
 	}
 }
 

@@ -20,6 +20,7 @@ public:
     bool CheckHit(const Rect& me, const Rect& other);
     void YCloserMove();
     void XCloserMove();
+    void XYCloserMove();
 
 };
 
