@@ -22,6 +22,7 @@ public:
     void XCloserMove();
     void XYCloserMove();
     void XYCloserMoveRandom();
+    void RightHandMove();
 
 };
 

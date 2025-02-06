@@ -47,9 +47,9 @@ namespace {
 		{
 			for (int i = 0; i < w; i++) {
 				if (i == 0 || j == 0 || i == w - 1 || j == h - 1)
-					_stage[j][i] = STAGE_OBJ::WALL;
-				else
 					_stage[j][i] = STAGE_OBJ::EMPTY;
+				else
+					_stage[j][i] = STAGE_OBJ::WALL;
 			}
 		}
 	}
@@ -64,6 +64,15 @@ namespace {
 			sp = prStack.top();
 			prStack.pop();
 			DigDug(sp.x, sp.y, _stage);
+		}
+		for (int j = 0; j < h; j++)
+		{
+			for (int i = 0; i < w; i++)
+			{
+				if (i == 0 || j == 0 || i == w - 1 || j == h - 1)
+					_stage[j][i] = STAGE_OBJ::WALL;
+				continue;
+			}
 		}
 	}
 
