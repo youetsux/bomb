@@ -1,5 +1,79 @@
 #include "Stage.h"
 #include "./globals.h"
+#include <stack>
+
+namespace {
+	std::stack<Point> prStack;
+
+	void DigDug(int x, int y, vector<vector<STAGE_OBJ>> &_stage)
+	{
+		_stage[y][x] = STAGE_OBJ::EMPTY;
+		
+		Point Dir[]{ {0,-1},{1, 0},{0, 1},{-1,0} };
+		std::vector<int> dList;
+		for (int i = 0; i < 4; i++) {
+			//next‚ð0~3‚Ü‚Å‰ñ‚µ‚Ä‚Å‚½[‚ðŽæ“¾
+			Point next = Point{ x + Dir[i].x, y + Dir[i].y };
+			Point nextNext = { next.x + Dir[i].x, next.y + Dir[i].y };
+			if (nextNext.x < 0 || nextNext.y < 0 || nextNext.x > STAGE_WIDTH - 1 || nextNext.y > STAGE_HEIGHT - 1)
+				continue;
+
+			if (_stage[nextNext.y][nextNext.x] == STAGE_OBJ::WALL)
+			{
+				dList.push_back(i);
+			}
+		}
+		if (dList.empty())
+		{
+			return;
+		}
+		int nrand = rand() % dList.size();
+		int tmp = dList[nrand];
+
+		Point next = { x + Dir[tmp].x, y + Dir[tmp].y };
+		Point nextNext = { next.x + Dir[tmp].x, next.y + Dir[tmp].y };
+
+		MazeData[next.y][next.x] = FLOOR;
+		MazeData[nextNext.y][nextNext.x] = FLOOR;
+
+		DiganimList.push_back({ next, tekazu });
+		DiganimList.push_back({ nextNext, tekazu });
+		tekazu++;
+		prStack.push(nextNext);
+		DigDug(nextNext.x, nextNext.y);
+	}
+
+
+	void AllWall(int w, int h)
+	{
+		for (int j = 0; j < h; j++)
+		{
+			for (int i = 0; i < w; i++) {
+				if (i == 0 || j == 0 || i == w - 1 || j == h - 1)
+					MazeData[j][i] = FLOOR;
+				else
+					MazeData[j][i] = WALL;
+			}
+		}
+	}
+
+	void MakeMazeDigDug(int w, int h)
+	{
+		AllWall(w, h);
+		Point sp{ 1, 1 };
+		prStack.push(sp);
+		while (!prStack.empty())
+		{
+			sp = prStack.top();
+			prStack.pop();
+			DigDug(sp.x, sp.y);
+		}
+	}
+
+}
+
+
+
 
 Stage::Stage()
 {

@@ -21,6 +21,7 @@ public:
     void YCloserMove();
     void XCloserMove();
     void XYCloserMove();
+    void XYCloserMoveRandom();
 
 };
 

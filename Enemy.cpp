@@ -68,7 +68,7 @@ void Enemy::Update()
 		//forward_ = (DIR)(GetRand(3));
 		//ここに動きのパターンを入れる
 		//YCloserMove();
-		XYCloserMove();
+		XYCloserMoveRandom();
 	}
 
 }
@@ -125,6 +125,22 @@ void Enemy::XYCloserMove()
 		{
 			forward_ = DOWN;
 		}
+	}
+}
+
+void Enemy::XYCloserMoveRandom()
+{
+
+	//３分の1の確率でプレイヤーに近い方に行く、残りの3分の1はランダム方向に移動、残りは何もしない
+	Player* player = (Player*)FindGameObject<Player>();
+	int xdis = abs(pos_.x - player->GetPos().x);
+	int ydis = abs(pos_.y - player->GetPos().y);
+	int rnum = GetRand(2);
+	if (rnum == 0)
+		XYCloserMove();
+	else if (rnum == 1)
+	{
+		forward_ = (DIR)GetRand(3);
 	}
 }
 
