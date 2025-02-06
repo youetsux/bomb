@@ -33,40 +33,37 @@ namespace {
 		Point next = { x + Dir[tmp].x, y + Dir[tmp].y };
 		Point nextNext = { next.x + Dir[tmp].x, next.y + Dir[tmp].y };
 
-		MazeData[next.y][next.x] = FLOOR;
-		MazeData[nextNext.y][nextNext.x] = FLOOR;
+		_stage[next.y][next.x] = STAGE_OBJ::EMPTY;
+		_stage[nextNext.y][nextNext.x] = STAGE_OBJ::EMPTY;
 
-		DiganimList.push_back({ next, tekazu });
-		DiganimList.push_back({ nextNext, tekazu });
-		tekazu++;
 		prStack.push(nextNext);
-		DigDug(nextNext.x, nextNext.y);
+		DigDug(nextNext.x, nextNext.y, _stage);
 	}
 
 
-	void AllWall(int w, int h)
+	void AllWall(int w, int h, vector<vector<STAGE_OBJ>>& _stage)
 	{
 		for (int j = 0; j < h; j++)
 		{
 			for (int i = 0; i < w; i++) {
 				if (i == 0 || j == 0 || i == w - 1 || j == h - 1)
-					MazeData[j][i] = FLOOR;
+					_stage[j][i] = STAGE_OBJ::WALL;
 				else
-					MazeData[j][i] = WALL;
+					_stage[j][i] = STAGE_OBJ::EMPTY;
 			}
 		}
 	}
 
-	void MakeMazeDigDug(int w, int h)
+	void MakeMazeDigDug(int w, int h, vector<vector<STAGE_OBJ>>& _stage)
 	{
-		AllWall(w, h);
+		AllWall(w, h, _stage);
 		Point sp{ 1, 1 };
 		prStack.push(sp);
 		while (!prStack.empty())
 		{
 			sp = prStack.top();
 			prStack.pop();
-			DigDug(sp.x, sp.y);
+			DigDug(sp.x, sp.y, _stage);
 		}
 	}
 
@@ -79,24 +76,25 @@ Stage::Stage()
 {
 	stageData = vector(STAGE_HEIGHT, vector<STAGE_OBJ>(STAGE_WIDTH, STAGE_OBJ::EMPTY));
 
-	for (int y = 0; y < STAGE_HEIGHT; y++)
-	{
-		for (int x = 0; x < STAGE_WIDTH; x++)
-		{
-			if (y == 0 || y == STAGE_HEIGHT - 1 || x == 0 || x == STAGE_WIDTH - 1)
-			{
-				stageData[y][x] = STAGE_OBJ::WALL;
-			}
-			else
-			{
-				if (x % 2 == 0 && y % 2 == 0)
-					stageData[y][x] = STAGE_OBJ::WALL;
-				else
-					stageData[y][x] = STAGE_OBJ::EMPTY;
-			}
+	MakeMazeDigDug(STAGE_WIDTH, STAGE_HEIGHT, stageData);
+	//for (int y = 0; y < STAGE_HEIGHT; y++)
+	//{
+	//	for (int x = 0; x < STAGE_WIDTH; x++)
+	//	{
+	//		if (y == 0 || y == STAGE_HEIGHT - 1 || x == 0 || x == STAGE_WIDTH - 1)
+	//		{
+	//			stageData[y][x] = STAGE_OBJ::WALL;
+	//		}
+	//		else
+	//		{
+	//			if (x % 2 == 0 && y % 2 == 0)
+	//				stageData[y][x] = STAGE_OBJ::WALL;
+	//			else
+	//				stageData[y][x] = STAGE_OBJ::EMPTY;
+	//		}
 
-		}
-	}
+	//	}
+	//}
 	setStageRects();
 }
 
