@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "Player.h"
 #include <map>
+#include <queue>
 
 namespace
 {
@@ -22,6 +23,9 @@ Enemy::Enemy()
 
 	pos_ = { rx * CHA_WIDTH, ry * CHA_HEIGHT };
 	forward_ = RIGHT;
+
+	dist = vector(STAGE_HEIGHT, vector<int>(STAGE_WIDTH, INT_MAX));
+	pre = vector(STAGE_HEIGHT, vector<Point>(STAGE_WIDTH, { -1, -1 }));
 }
 
 Enemy::~Enemy()
@@ -67,14 +71,13 @@ void Enemy::Update()
 	int cy = (pos_.y / (CHA_HEIGHT))%2;
 	if (prgssx == 0 && prgssy == 0 && cx && cy)
 	{
-		//forward_ = (DIR)(GetRand(3));
-		//ここに動きのパターンを入れる
-		//YCloserMove();
-		//XYCloserMoveRandom();
+		//次、どっちの方向に行くかここに書く！
 		RightHandMove();
 	}
 
 }
+
+
 
 void Enemy::YCloserMove()
 {
@@ -173,6 +176,38 @@ void Enemy::RightHandMove()
 	else if (isRightOpen == false && isForwardOpen == false)
 	{
 		forward_ = myLeft[forward_];
+	}
+}
+
+void Enemy::Dijkstra(Point sp, Point gp)
+{
+	using Mdat = std::pair<int, Point>;
+
+	dist[sp.y][sp.x] = 0;
+	std::priority_queue<Mdat, std::vector<Mdat>, std::greater<Mdat>> pq;
+	pq.push(Mdat(0, { sp.x, sp.y }));
+	vector<vector<StageObj>> stageData = ((Stage*)FindGameObject<Stage>())->GetStageGrid();
+
+	while (!pq.empty())
+	{
+		Mdat p = pq.top();
+		pq.pop();
+
+		//Rect{ (int)p.second.x * STAGE_WIDTH, (int)p.second.y * BLOCK_SIZE.y, BLOCK_SIZE }.draw(Palette::Red);
+		//getchar();
+		int c = p.first;
+		Point v = p.second;
+		
+		for (int i = 0; i < 4; i++)
+		{
+			Point np = { v.x + (int)nDir[i].x, v.y + (int)nDir[i].y };
+			if (np.x < 0 || np.y < 0 || np.x >= STAGE_WIDTH || np.y >= STAGE_HEIGHT) continue;
+			if (stageData[np.y][np.x].obj == STAGE_OBJ::WALL) continue;
+			if (dist[np.y][np.x] <= stageData[np.y][np.x].weight + c) continue;
+			dist[np.y][np.x] = stageData[np.y][np.x].weight + c;
+			pre[np.y][np.x] = Point({ v.x, v.y });
+			pq.push(Mdat(dist[np.y][np.x], np));
+		}
 	}
 }
 

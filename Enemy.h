@@ -1,7 +1,9 @@
 #pragma once
 #include "./Library/GameObject.h"
 #include "./globals.h"
+#include <vector>
 
+using std::vector;
 
 class Enemy :
     public GameObject
@@ -11,6 +13,8 @@ class Enemy :
     float speed_;
     Point nextPos_;
     DIR forward_;
+    vector<vector<int>> dist;
+    vector<vector<Point>> pre;
 public:
     Enemy();
     ~Enemy();
@@ -23,6 +27,7 @@ public:
     void XYCloserMove();
     void XYCloserMoveRandom();
     void RightHandMove();
+    void Dijkstra(Point sp, Point gp);
 
 };
 

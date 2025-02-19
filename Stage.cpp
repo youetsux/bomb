@@ -5,9 +5,9 @@
 namespace {
 	std::stack<Point> prStack;
 
-	void DigDug(int x, int y, vector<vector<STAGE_OBJ>> &_stage)
+	void DigDug(int x, int y, vector<vector<StageObj>> &_stage)
 	{
-		_stage[y][x] = STAGE_OBJ::EMPTY;
+		_stage[y][x].obj = STAGE_OBJ::EMPTY;
 		
 		Point Dir[]{ {0,-1},{1, 0},{0, 1},{-1,0} };
 		std::vector<int> dList;
@@ -18,10 +18,11 @@ namespace {
 			if (nextNext.x < 0 || nextNext.y < 0 || nextNext.x > STAGE_WIDTH - 1 || nextNext.y > STAGE_HEIGHT - 1)
 				continue;
 
-			if (_stage[nextNext.y][nextNext.x] == STAGE_OBJ::WALL)
+			if (_stage[nextNext.y][nextNext.x].obj == STAGE_OBJ::WALL)
 			{
 				dList.push_back(i);
 			}
+			//ここにelseつけて、もう一個掘っちゃうといいかも！（ループのやつ）
 		}
 		if (dList.empty())
 		{
@@ -33,28 +34,28 @@ namespace {
 		Point next = { x + Dir[tmp].x, y + Dir[tmp].y };
 		Point nextNext = { next.x + Dir[tmp].x, next.y + Dir[tmp].y };
 
-		_stage[next.y][next.x] = STAGE_OBJ::EMPTY;
-		_stage[nextNext.y][nextNext.x] = STAGE_OBJ::EMPTY;
+		_stage[next.y][next.x].obj = STAGE_OBJ::EMPTY;
+		_stage[nextNext.y][nextNext.x].obj = STAGE_OBJ::EMPTY;
 
 		prStack.push(nextNext);
 		DigDug(nextNext.x, nextNext.y, _stage);
 	}
 
 
-	void AllWall(int w, int h, vector<vector<STAGE_OBJ>>& _stage)
+	void AllWall(int w, int h, vector<vector<StageObj>>& _stage)
 	{
 		for (int j = 0; j < h; j++)
 		{
 			for (int i = 0; i < w; i++) {
 				if (i == 0 || j == 0 || i == w - 1 || j == h - 1)
-					_stage[j][i] = STAGE_OBJ::EMPTY;
+					_stage[j][i].obj = STAGE_OBJ::EMPTY;
 				else
-					_stage[j][i] = STAGE_OBJ::WALL;
+					_stage[j][i].obj = STAGE_OBJ::WALL;
 			}
 		}
 	}
 
-	void MakeMazeDigDug(int w, int h, vector<vector<STAGE_OBJ>>& _stage)
+	void MakeMazeDigDug(int w, int h, vector<vector<StageObj>>& _stage)
 	{
 		AllWall(w, h, _stage);
 		Point sp{ 1, 1 };
@@ -65,12 +66,15 @@ namespace {
 			prStack.pop();
 			DigDug(sp.x, sp.y, _stage);
 		}
+
+
 		for (int j = 0; j < h; j++)
 		{
 			for (int i = 0; i < w; i++)
 			{
+				_stage[j][i].weight = 1.0;
 				if (i == 0 || j == 0 || i == w - 1 || j == h - 1)
-					_stage[j][i] = STAGE_OBJ::WALL;
+					_stage[j][i].obj = STAGE_OBJ::WALL;
 				continue;
 			}
 		}
@@ -83,7 +87,7 @@ namespace {
 
 Stage::Stage()
 {
-	stageData = vector(STAGE_HEIGHT, vector<STAGE_OBJ>(STAGE_WIDTH, STAGE_OBJ::EMPTY));
+	stageData = vector(STAGE_HEIGHT, vector<StageObj>(STAGE_WIDTH, { STAGE_OBJ::EMPTY, 1.0f }));
 
 	MakeMazeDigDug(STAGE_WIDTH, STAGE_HEIGHT, stageData);
 	//for (int y = 0; y < STAGE_HEIGHT; y++)
@@ -121,7 +125,7 @@ void Stage::Draw()
 	{
 		for (int x = 0; x < STAGE_WIDTH; x++)
 		{
-			switch (stageData[y][x])
+			switch (stageData[y][x].obj)
 			{
 			case STAGE_OBJ::EMPTY:
 				DrawBox(x * CHA_WIDTH, y * CHA_HEIGHT, x * CHA_WIDTH + CHA_WIDTH, y * CHA_HEIGHT + CHA_HEIGHT, GetColor(102, 205, 170), TRUE);
@@ -145,7 +149,7 @@ void Stage::setStageRects()
 	{
 		for (int x = 0; x < STAGE_WIDTH; x++)
 		{
-			if (stageData[y][x] == STAGE_OBJ::WALL)
+			if (stageData[y][x].obj == STAGE_OBJ::WALL)
 			{
 				stageRects.push_back(Rect(x * CHA_WIDTH, y * CHA_HEIGHT,  CHA_WIDTH, CHA_HEIGHT));
 			}
